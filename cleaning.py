@@ -10,6 +10,7 @@ stopwords_english.append("coronavirus")
 stopwords_english.append("corona")
 stopwords_english.append('covid')
 stopwords_english.append('covid_19')
+stopwords_english.append('covid19')
 stopwords_english.append('_19')
 
 from nltk.tokenize import TweetTokenizer
@@ -19,13 +20,13 @@ tweet_tokenizer = TweetTokenizer(preserve_case=False, strip_handles=True, reduce
 
 def clean_tweets(tweet):
     # remove @
-    tweet = re.sub(r'\@\w*', '', tweet)
+    tweet = re.sub(r'@\w*', '', tweet)
 
     # remove retweet text "RT"
     tweet = re.sub(r'^RT[\s]+', '', tweet)
 
     # remove hyperlinks
-    tweet = re.sub(r'https?:\/\/.*[\r\n]*', '', tweet)
+    tweet = re.sub(r'https?://\S+[\r\n\s]*', '', tweet)
 
     # remove hashtags
     # only removing the hash # sign from the word

@@ -1,4 +1,10 @@
 usa = {"USA", 'US', 'U.S', 'U.S.A', 'UNITED STATES OF AMERICA', 'THE UNITED STATES OF AMERICA', 'THE UNITED STATES'}
+full_states = {'ALABAMA':'AL', 'INDIANA':'ID', 'NEBRASKA':'NE', 'SOUTH CAROLINA':'SC', 'ALASKA':'AK', 'IOWA':'IA', 'NEVADA':'NV', 'SOUTH DAKOTA':'SD', 'ARIZONA':'AZ', 'KANSAS':'KS',
+               'NEW HAMPSHIRE':'NH', 'TENNESSEE':'TN', 'ARKANSAS':'AR', 'KENTUCKY':'KY', 'NEW JERSEY':'NJ', 'TEXAS':'TX', 'CALIFORNIA':'CA', 'LOUISIANA':'LA', 'NEW MEXICO':'NM',
+               'UTAH':'UT', 'COLORADO':'CO', 'MAINE':'ME', 'NEW YORK':'NY', 'VERMONT':'VT', 'CONNECTICUT':'CT', 'MARYLAND':'MD', 'NORTH CAROLINA':'NC', 'VIRGINIA':'VA',
+               'DELAWARE':'DE', 'MASSACHUSETTS':'MA', 'NORTH DAKOTA':'ND', 'WASHINGTON':'WA', 'FLORIDA':'FL', 'MICHIGAN':'MI', 'OHIO':'OH', 'WEST VIRGINIA':'WV', 'GEORGIA':'GA',
+               'MINNESOTA':'MN', 'OKLAHOMA':'OK', 'WISCONSIN':'WI', 'HAWAII':'HI', 'MISSISSIPPI':'MS', 'OREGON':'OR', 'WYOMING':'WY', 'IDAHO':'ID', 'MISSOURI':'MO',
+               'PENNSYLVANIA':'PA', 'ILLINOIS':'IL', 'MONTANA':'MT', 'RHODE ISLAND':'RI'}
 states = {'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'D.C.', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE',
           'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'}
 cities = {'NEW YORK CITY':'NY','NYC':'NY','NEW YORK':'NY', 'LOS ANGELES':'CA', 'CHICAGO':'IL', 'HOUSTON':'TX', 'PHOENIX':'AZ', 'PHILADELPHIA':'PA', 'SAN ANTONIO':'TX',
@@ -48,11 +54,16 @@ if user_location:
                     state_location = cities[city]
                 elif city in states:
                     state_location = city
+                elif city in full_states:
+                    state_location = full_states[city]
                 else:
                     state_location = 'USA'
             elif l in states:
                 # city, state 或者 city, state, usa
                 state_location = l
+            elif l in full_states:
+                # city, state 或者 city, state, usa
+                state_location = full_states[l]
             elif l in cities:
                 # xxx, city, state/usa
                 state_location = cities[l]
@@ -68,6 +79,8 @@ if user_location:
             state_location = cities[l]
         elif l in states:
             state_location = l
+        elif l in full_states:
+            state_location = full_states[l]
         elif l in usa:
             state_location = 'USA'
         else:
