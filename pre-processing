@@ -1,0 +1,51 @@
+import nltk
+import pandas as pd
+import re
+
+def alpha_filter(w):
+  # pattern to match a word of non-alphabetical characters
+    pattern = re.compile('^[^a-z]+$')
+    if (pattern.match(w)):
+        return True
+    else:
+        return False
+
+def pre_process(r):                               #processing the comments, turn them into the format that can be analyzed
+  r = nltk.word_tokenize(r)                           #tokenization
+  r = [w.lower() for w in r]                          #turn them into lower case
+  r = [word for word in r if not any(c.isdigit() for c in word)]            #delete all the numbers
+  stop = nltk.corpus.stopwords.words('english')                     #delete all the stop words
+  stop.append("virus")
+  stop.append("coronavirus")
+  r = [w for w in r if not alpha_filter(w)]
+  r = [x for x in r if x not in stop]
+  r = [y for y in r if len(y) > 2]
+  porter = nltk.PorterStemmer()                            #stemming
+  r = [porter.stem(t) for t in r]
+  wnl = nltk.WordNetLemmatizer()                          #lemmatizing
+  r= [wnl.lemmatize(t) for t in r]
+  text = " ".join(r)
+  return text
+
+def remove_at(text):
+    result = []
+    for i in text:
+        word = i.split(' ')
+        for j in word:
+            if('@' in j) or ('#' in j) or ("https" in j) or ('&' in j):
+                word.remove(j)
+        a = " ".join(word)
+        result.append(a)
+    return result
+
+"""
+具体用法：注意先安装nltk库和pandas库，re库应该是自带的。处理时先转成list。remove_at函数输入是整个文本，
+pre_process函数的输入是某一句话，用个for循环遍历一下文本即可
+"""
+f0 = pd.read_csv("D:/cs/P2/Tweets.csv")
+train_text = f0['text'].tolist()
+
+train_text = remove_at(train_text)
+
+for i in range(len(train_text)):
+    train_text[i] = pre_process(train_text[i])
