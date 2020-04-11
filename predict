@@ -1,0 +1,65 @@
+def filter(text,lang,follower,friend):
+    raw = []
+    for i in range(len(text)):          #只要语言是英文的并且follower和friend满足条件的
+        if(lang[i] == 'en') and (follower[i] < (100 * friend[i])):
+            raw.append(text[i])
+
+    for j in raw:                       #去掉含‘#’单词超过6个的
+        word = j.split(' ')
+        count = 0
+        for y in word:
+            if('#' in y):
+                count += 1
+        if(count>6):
+            raw.remove(j)
+
+    return raw
+
+def predict(path):
+    r = dict()
+    f = pd.read_csv(path)
+    text = f['text'].tolist()
+    lang = f['lang'].tolist()
+    follower = f['followers_count'].tolist()
+    friend = f['friends_count'].tolist()
+    favourtite = f['favourites_count'].tolist()
+
+    raw = filter(text,lang,follower,friend)
+
+    random.shuffle(raw)                #随机打乱取前20000个
+    test_number = 20000
+    test = raw[:test_number]
+
+    indices = []
+    fav = dict()
+    for k in test:
+        p = text.index(k)             #查找每条推文在原文本text中的索引
+        indices.append(p)             #保存索引
+        fav[p] = favourtite[p]        #字典['索引'] = 点赞数
+
+    pred_set = remove_at(test)
+
+    for i in range(len(pred_set)):
+        pred_set[i] = pre_process(pred_set[i])
+
+    vec = vectorizer.transform(pred_set)
+
+    res = classifier.predict(vec)
+    count_pos = 0
+    count_neg = 0
+    count_neutral = 0
+
+    for m in range(len(indices)):
+        if(res[m] == 'positive'):
+            count_pos = count_pos + fav[indices[m]] + 1
+        elif(res[m] == 'negative'):
+            count_neg = count_neg + fav[indices[m]] + 1
+        else:
+            count_neutral = count_neutral + fav[indices[m]] + 1
+    count_total = count_pos + count_neutral + count_neg
+
+    r['positive'] = (str(count_pos / float(count_total) * 100) + '%')
+    r['negative'] = (str(count_neg / float(count_total) * 100) + '%')
+    r['neutral'] = (str(count_neutral / float(count_total) * 100) + '%')
+
+    return r
