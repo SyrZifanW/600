@@ -30,23 +30,37 @@ def pre_process(r):                               #processing the comments, turn
   text = " ".join(r)
   return text
 
-def remove_at(text):
+
+def remove_at(text, lang):
     result = []
-    for i in text:
-        word = i.split(' ')
-        for j in word:
-            if('@' in j) or ('#' in j) or ("https" in j) or ('&' in j):
-                word.remove(j)
-        a = " ".join(word)
-        result.append(a)
+    for i in range(len(text)):
+        if lang[i] != 'en':
+            continue
+        tweet = text[i]
+        tweet = re.sub(r'@\w*', '', tweet)
+        tweet = re.sub(r'^RT[\s]+', '', tweet)
+        tweet = re.sub(r'https?://\S+[\r\n\s]*', '', tweet)
+        tweet = re.sub(r'#', '', tweet)
+        tweet = re.sub(r'&amp;', '', tweet)
+        result.append(tweet)
+        # word = text[i].split(' ')
+        # print('1')
+        # for j in word:
+        #     if('@' in j) or ('#' in j) or ("http" in j) or ('&' in j):
+        #         word.remove(j)
+        # a = " ".join(word)
+        # result.append(a)
     return result
 
-f0 = pd.read_csv("D:/cs/P2/kaggle/2020-03-00 Coronavirus Tweets.CSV")['text']
+f0 = pd.read_csv("2020-03-12 Coronavirus Tweets.CSV")
+f0_text = f0['text']
+f0_lang = f0['lang']
 
-f = open("D:\cs\P2\CIS600 project/text.txt",'w',encoding = 'utf-8')
+f = open("text.txt",'w',encoding = 'utf-8')
 
-text = f0.tolist()
-train_text = remove_at(text)
+text = f0_text.tolist()
+lang = f0_lang.tolist()
+train_text = remove_at(text, lang)
 
 for i in range(len(train_text)):
     train_text[i] = pre_process(train_text[i])
@@ -56,7 +70,7 @@ for i in train_text:
 
 f.close()
 
-f2 = open("D:\cs\P2\CIS600 project/text.txt",'r',encoding='utf-8').read()
+f2 = open("text.txt",'r',encoding='utf-8').read()
 
 wordcloud = WordCloud(
         background_color="white", #设置背景为白色，默认为黑色
